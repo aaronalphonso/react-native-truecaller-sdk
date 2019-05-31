@@ -1,0 +1,30 @@
+{
+  "name": "react-native-truecaller-sdk",
+  "version": "1.0.0",
+  "description": "Integration of truecaller sdk in android as well as ios",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronalphonso/react-native-truecaller-sdk.git"
+  },
+  "keywords": [
+    "android",
+    "truecaller",
+    "react-native",
+    "react",
+    "native",
+    "sdk",
+    "integration",
+    "TrueSDK",
+    "trueclient"
+  ],
+  "author": "Aaron Alphonso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaronalphonso/react-native-truecaller-sdk/issues"
+  },
+  "homepage": "https://github.com/aaronalphonso/react-native-truecaller-sdk#readme"
+}
