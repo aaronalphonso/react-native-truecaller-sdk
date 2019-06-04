@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -23,14 +22,12 @@ import com.truecaller.android.sdk.TrueError;
 import com.truecaller.android.sdk.TrueProfile;
 import com.truecaller.android.sdk.TrueSdkScope;
 
-import java.util.Map;
 
 
 public class TruecallerModule extends ReactContextBaseJavaModule implements ITrueCallback{
 
     private TrueSDK trueSDK;
     private String TAG="TruecallerModule";
-    private String mTruecallerRequestNonce;
 
     private  ReactContext reactContext;
     private ActivityEventListener mEventListener = new BaseActivityEventListener(){
@@ -42,12 +39,14 @@ public class TruecallerModule extends ReactContextBaseJavaModule implements ITru
         }
     };
 
-    //Need to hookup this on react native side
-    @ReactMethod
-    public boolean isUsable() {
+    private boolean isUsable() {
         return trueSDK.isUsable();
     }
 
+    @ReactMethod
+    public void isUsable(Callback boolCallBack) {
+        boolCallBack.invoke(trueSDK.isUsable());
+    }
 
     public TruecallerModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -60,27 +59,55 @@ public class TruecallerModule extends ReactContextBaseJavaModule implements ITru
         return "TruecallerModule";
     }
 
-
-    private int consentModePopup(String mode) {
+    private int getConsentMode(String mode) {
         switch (mode) {
             case "CONSENT_MODE_POPUP":
                 return TrueSdkScope.CONSENT_MODE_POPUP;
             case "CONSENT_MODE_FULLSCREEN":
                 return TrueSdkScope.CONSENT_MODE_FULLSCREEN;
             default:
-                return TrueSdkScope.CONSENT_MODE_FULLSCREEN;
+                return TrueSdkScope.CONSENT_MODE_POPUP;
         }
     }
 
+    private int getConsentTitle(String title) {
+        switch (title) {
+            case "SDK_CONSENT_TITLE_LOG_IN":
+                return TrueSdkScope.SDK_CONSENT_TITLE_LOG_IN;
+            case "SDK_CONSENT_TITLE_SIGN_UP":
+                return TrueSdkScope.SDK_CONSENT_TITLE_SIGN_UP;
+            case "SDK_CONSENT_TITLE_SIGN_IN":
+                return TrueSdkScope.SDK_CONSENT_TITLE_SIGN_IN;
+            case "SDK_CONSENT_TITLE_VERIFY":
+                return TrueSdkScope.SDK_CONSENT_TITLE_VERIFY;
+            case "SDK_CONSENT_TITLE_REGISTER":
+                return TrueSdkScope.SDK_CONSENT_TITLE_REGISTER;
+            case "SDK_CONSENT_TITLE_GET_STARTED":
+                return TrueSdkScope.SDK_CONSENT_TITLE_GET_STARTED;
+            default:
+                return TrueSdkScope.SDK_CONSENT_TITLE_GET_STARTED;
+        }
+    }
+
+    private int getFooterType(String footerType) {
+        switch (footerType) {
+            case "FOOTER_TYPE_SKIP":
+                return TrueSdkScope.FOOTER_TYPE_SKIP;
+            case "FOOTER_TYPE_CONTINUE":
+                return TrueSdkScope.FOOTER_TYPE_CONTINUE;
+            default:
+                return TrueSdkScope.FOOTER_TYPE_CONTINUE;
+        }
+    }
 
     @ReactMethod
-    public void initializeClient() {
+    public void initializeClient(String consentMode, String consentTitle, String footerType) {
+        Log.d("SDK options: ", "Truecaller Mode: "+consentMode+". Title: "+consentTitle+". Footer: "+footerType);
         TrueSdkScope trueScope = new TrueSdkScope.Builder(this.reactContext, this)
-                .consentMode(TrueSdkScope.CONSENT_MODE_POPUP )
-                .consentTitleOption( TrueSdkScope.SDK_CONSENT_TITLE_GET_STARTED )
-                .footerType( TrueSdkScope.FOOTER_TYPE_CONTINUE )
+                .consentMode( this.getConsentMode(consentMode) )
+                .consentTitleOption( this.getConsentTitle(consentTitle) )
+                .footerType( this.getFooterType(footerType) )
                 .build();
-
         TrueSDK.init(trueScope);
         trueSDK = TrueSDK.getInstance();
         Log.d("SDK instance is", trueSDK.toString());
@@ -92,10 +119,12 @@ public class TruecallerModule extends ReactContextBaseJavaModule implements ITru
         if (trueSDK.isUsable()) {
             trueSDK.getUserProfile(activity);
             Log.d("Truecaller", "Truecaller installed.");
-        } else {
+        } 
+        else {
             Log.d("Truecaller", "Truecaller not installed");
         }
     }
+
     @Override
     public void onSuccessProfileShared(@NonNull TrueProfile trueProfile)
     {
