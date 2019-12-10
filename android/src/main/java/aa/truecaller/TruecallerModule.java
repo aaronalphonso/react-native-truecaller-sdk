@@ -159,6 +159,7 @@ public class TruecallerModule extends ReactContextBaseJavaModule implements ITru
     public void onFailureProfileShared(@NonNull TrueError trueError) {
         WritableMap params = Arguments.createMap();
         params.putString("profile","error");
+        params.putInt("errorCode",trueError.getErrorType());
 
         sendEvent(reactContext, "profileErrorReponse", params);
 
