@@ -182,12 +182,53 @@ For handling the reject event:
 ```
 
 TRUECALLER.on(TRUECALLER_EVENT.TrueProfileResponseError, error => {
-    console.log('User rejected the truecaller consent request! ', error)
+    console.log('User rejected the truecaller consent request! ', error);
+
+    if(error && error.errorCode){
+        switch(error.errorCode){
+            case 1:{
+                //Network Failure
+                break;
+            }
+            case 2:{
+                //User pressed back
+                break;
+            }
+            case 3:{
+                //Incorrect Partner Key
+                break;
+            }
+            case 4:{
+                //User Not Verified on Truecaller
+                break;
+            }
+            case 5:{
+                //Truecaller App Internal Error
+                break;
+            }
+            case 10:{
+                //User Not Verified on Truecaller
+                break;
+            }
+            case 13:{
+                //User pressed back while verification in process
+                break;
+            }
+            case 14:{
+                //User pressed SKIP or USE ANOTHER NUMBER
+                break;
+            }
+            default:{
+
+            }
+        }
+    }
 }
 
 ```
-
+**Error Type 4** and **Error Type 10** could arise in different conditions depending on whether the user has not registered on Truecaller app on their smartphone or if the user has deactivated their Truecaller profile at any point of time from the app.
   
+
 
 The profile object that is shared with your app in the success event contains the following attributes:
 
